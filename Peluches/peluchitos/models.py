@@ -21,3 +21,19 @@ class Peluche(models.Model):
 
     def __str__(self):
         return f"{self.nombre} - Q{self.precio}"
+    
+
+# 🧾 Venta (encabezado)
+class Venta(models.Model):
+    cliente = models.ForeignKey(Cliente, on_delete=models.CASCADE, related_name="ventas")
+    fecha = models.DateTimeField(auto_now_add=True)
+    total = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+
+    def __str__(self):
+        return f"Venta #{self.id} - {self.cliente.nombre}"
+
+    def calcular_total(self):
+        total = sum(detalle.subtotal for detalle in self.detalles.all())
+        self.total = total
+        self.save()
+        return total
